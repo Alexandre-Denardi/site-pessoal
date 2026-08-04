@@ -1,0 +1,19 @@
+# Só para desenvolvimento local: um MySQL igual ao de produção.
+# Em produção o banco é o seu, informado no instalador.
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: site-pessoal-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: site
+      MYSQL_USER: site
+      MYSQL_PASSWORD: site
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-dados:/var/lib/mysql
+
+volumes:
+  mysql-dados:

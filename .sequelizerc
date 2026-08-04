@@ -1,0 +1,10 @@
+// Faz o `npx sequelize-cli migration:generate --name x` gravar no lugar certo.
+// A aplicação roda as migrations pelo Umzug (src/bd/migracoes.js), não pelo CLI.
+const path = require('path')
+
+module.exports = {
+  config: path.resolve('config', 'sequelize.cjs'),
+  'migrations-path': path.resolve('migrations'),
+  'seeders-path': path.resolve('seeders'),
+  'models-path': path.resolve('src', 'bd'),
+}

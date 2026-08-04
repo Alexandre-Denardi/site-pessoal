@@ -1,0 +1,6 @@
+# Scripts que rodam dentro do container precisam terminar em LF,
+# senão o shebang quebra ("bad interpreter: no such file").
+*.sh text eol=lf
+docker/* text eol=lf
+Dockerfile text eol=lf
+discloud.config text eol=lf

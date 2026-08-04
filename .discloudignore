@@ -1,0 +1,14 @@
+# O Discloud constrói o Dockerfile no servidor — o que for gerado lá
+# não precisa subir daqui.
+node_modules/
+.next/
+.git/
+.github/
+.claude/
+data/
+media/
+.env
+.env.local
+*.log
+README.md
+docker-compose.yml

@@ -1,0 +1,375 @@
+@import 'tailwindcss';
+
+/* ─────────────────────────────────────────────
+   Paleta — terminal em tons de verde
+   ───────────────────────────────────────────── */
+:root {
+  --base: #070b09;
+  --surface: #0b110e;
+  --surface-2: #101a15;
+  --line: #1b2b22;
+  --line-forte: #2a4436;
+  --ink: #dbeae1;
+  --ink-dim: #7e9c8b;
+  --verde: #45e08b;
+  --verde-esc: #15a463;
+  --verde-glow: rgba(69, 224, 139, 0.16);
+  --ambar: #e2c258;
+  --vermelho: #ff6b6b;
+  --sombra: 0 0 0 1px var(--line), 0 18px 40px -24px rgba(0, 0, 0, 0.9);
+}
+
+:root[data-tema='claro'] {
+  --base: #f2f6f3;
+  --surface: #ffffff;
+  --surface-2: #eef4f0;
+  --line: #d3e2d9;
+  --line-forte: #a9c9b7;
+  --ink: #0f1f18;
+  --ink-dim: #55705f;
+  --verde: #0c8f52;
+  --verde-esc: #0a6d3f;
+  --verde-glow: rgba(12, 143, 82, 0.1);
+  --ambar: #9a7508;
+  --vermelho: #c02626;
+  --sombra: 0 0 0 1px var(--line), 0 14px 32px -26px rgba(6, 30, 20, 0.5);
+}
+
+@theme inline {
+  --color-base: var(--base);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-forte: var(--line-forte);
+  --color-ink: var(--ink);
+  --color-ink-dim: var(--ink-dim);
+  --color-verde: var(--verde);
+  --color-verde-esc: var(--verde-esc);
+  --color-ambar: var(--ambar);
+  --color-vermelho: var(--vermelho);
+
+  --font-mono: ui-monospace, 'JetBrains Mono', 'Cascadia Mono', 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
+  --font-sans: ui-sans-serif, system-ui, 'Segoe UI', Inter, Roboto, 'Helvetica Neue', sans-serif;
+}
+
+/* ─────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+  color-scheme: dark;
+}
+
+html[data-tema='claro'] {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--base);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  min-height: 100dvh;
+}
+
+/* Malha quadriculada + brilho verde no topo */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.32;
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 30%, transparent 78%);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(ellipse 60% 40% at 50% -8%, var(--verde-glow), transparent 70%);
+  pointer-events: none;
+}
+
+::selection {
+  background: var(--verde);
+  color: var(--base);
+}
+
+:focus-visible {
+  outline: 2px solid var(--verde);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Scrollbar discreta */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-forte) transparent;
+}
+
+/* ─────────────────────────────────────────────
+   Utilitários do tema
+   ───────────────────────────────────────────── */
+@utility mono {
+  font-family: var(--font-mono);
+  font-feature-settings: 'liga' 0;
+}
+
+/* Janela de terminal: barra de título com os 3 pontos */
+@utility janela {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: var(--sombra);
+  overflow: hidden;
+}
+
+/* Cartão com cantos em colchete */
+@utility cartao {
+  position: relative;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(140deg, var(--line-forte), var(--line) 45%) border-box;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+@utility brilho-hover {
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 0 0 1px var(--verde-esc),
+      0 22px 45px -30px var(--verde);
+  }
+}
+
+/* Cursor piscando do terminal */
+.cursor::after {
+  content: '▊';
+  color: var(--verde);
+  animation: piscar 1.05s steps(2, start) infinite;
+  margin-left: 1px;
+}
+
+@keyframes piscar {
+  to {
+    visibility: hidden;
+  }
+}
+
+/* Linhas de varredura bem sutis sobre o hero */
+.scanlines {
+  position: relative;
+}
+
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.022) 0 1px,
+    transparent 1px 3px
+  );
+  mix-blend-mode: overlay;
+}
+
+html[data-tema='claro'] .scanlines::after {
+  display: none;
+}
+
+/* ─────────────────────────────────────────────
+   Conteúdo rich text vindo do Payload
+   ───────────────────────────────────────────── */
+.prosa {
+  color: var(--ink);
+  line-height: 1.75;
+  font-size: 1.0125rem;
+}
+
+.prosa > * + * {
+  margin-top: 1.15em;
+}
+
+.prosa h2,
+.prosa h3,
+.prosa h4 {
+  font-family: var(--font-mono);
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-top: 2.2em;
+  margin-bottom: 0.7em;
+  scroll-margin-top: 6rem;
+}
+
+.prosa h2 {
+  font-size: 1.4rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.prosa h2::before,
+.prosa h3::before {
+  content: '## ';
+  color: var(--verde);
+}
+
+.prosa h3 {
+  font-size: 1.15rem;
+}
+
+.prosa h3::before {
+  content: '### ';
+}
+
+.prosa a {
+  color: var(--verde);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--verde-esc);
+}
+
+.prosa a:hover {
+  background: var(--verde-glow);
+}
+
+.prosa strong {
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.prosa ul,
+.prosa ol {
+  padding-left: 1.4rem;
+}
+
+.prosa ul {
+  list-style: none;
+  padding-left: 1.1rem;
+}
+
+.prosa ul li {
+  position: relative;
+  padding-left: 1.1rem;
+}
+
+.prosa ul li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--verde);
+}
+
+.prosa ol {
+  list-style: decimal;
+}
+
+.prosa ol li::marker {
+  color: var(--verde);
+  font-family: var(--font-mono);
+}
+
+.prosa li + li {
+  margin-top: 0.45em;
+}
+
+.prosa blockquote {
+  border-left: 2px solid var(--verde-esc);
+  background: var(--surface-2);
+  padding: 0.85rem 1.1rem;
+  border-radius: 0 6px 6px 0;
+  color: var(--ink-dim);
+}
+
+.prosa code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.12em 0.4em;
+  color: var(--verde);
+}
+
+.prosa pre {
+  font-family: var(--font-mono);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.prosa pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--ink);
+}
+
+.prosa hr {
+  border: none;
+  border-top: 1px dashed var(--line-forte);
+}
+
+.prosa img {
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  max-width: 100%;
+  height: auto;
+}
+
+.prosa table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.925rem;
+}
+
+.prosa th,
+.prosa td {
+  border: 1px solid var(--line);
+  padding: 0.55rem 0.7rem;
+  text-align: left;
+}
+
+.prosa th {
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  color: var(--verde);
+}
+
+/* ─────────────────────────────────────────────
+   Acessibilidade
+   ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .scanlines::after {
+    display: none;
+  }
+}

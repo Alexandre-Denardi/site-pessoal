@@ -1,0 +1,20 @@
+node_modules/
+.next/
+out/
+build/
+.env
+.env.local
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+npm-debug.log*
+
+# Conteúdo de execução — nunca versionar:
+# data/  guarda as credenciais do banco (config.json) gravadas pelo instalador
+# media/ guarda os uploads feitos pelo painel
+data/
+media/
+
+
+# Config local de ferramentas
+.claude/
