@@ -15,7 +15,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 COPY . .
-RUN npm ci
+RUN npm install
 
 ENV NODE_ENV=production
 RUN npm run build
