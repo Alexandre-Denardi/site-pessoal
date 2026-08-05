@@ -25,7 +25,10 @@ export default async function PaginaMidia({ searchParams }) {
   const bd = await getBd()
 
   const arquivos = (
-    await bd.modelos.Midia.findAll({ order: [['id', 'DESC']] })
+    await bd.modelos.Midia.findAll({
+      attributes: { exclude: ['dados'] },
+      order: [['id', 'DESC']],
+    })
   ).map((m) => m.get({ plain: true }))
 
   return (

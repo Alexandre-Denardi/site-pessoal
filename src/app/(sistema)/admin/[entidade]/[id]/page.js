@@ -45,7 +45,11 @@ export default async function FormularioEntidade({ params }) {
   }
 
   const midias = (
-    await bd.modelos.Midia.findAll({ order: [['id', 'DESC']], limit: 200 })
+    await bd.modelos.Midia.findAll({
+      attributes: { exclude: ['dados'] },
+      order: [['id', 'DESC']],
+      limit: 200,
+    })
   ).map((m) => m.get({ plain: true }))
 
   return (
