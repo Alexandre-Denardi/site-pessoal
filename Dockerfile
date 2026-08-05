@@ -14,11 +14,8 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends python3 make g++ \
   && rm -rf /var/lib/apt/lists/*
 
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm ci
-
 COPY . .
+RUN npm ci
 
 ENV NODE_ENV=production
 RUN npm run build
