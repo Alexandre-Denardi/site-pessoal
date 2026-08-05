@@ -36,16 +36,20 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
+# A Discloud roda o processo como não-root (UID 1000) — usa o usuário
+# "node" já embutido na imagem oficial em vez de criar um novo.
 # Saída standalone do Next: server.js + só as dependências usadas
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+COPY --from=builder --chown=node:node /app/public ./public
 
 # Lidas em tempo de execução pelo Umzug — não entram no bundle do Next.
-COPY --from=builder /app/migrations ./migrations
+COPY --from=builder --chown=node:node /app/migrations ./migrations
 
 # data/ → config.json gravado pelo instalador (uploads do painel ficam no banco)
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data && chown node:node /app/data
+
+USER node
 
 EXPOSE 8080
 
