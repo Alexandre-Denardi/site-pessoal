@@ -10,10 +10,9 @@ next-env.d.ts
 npm-debug.log*
 
 # Conteúdo de execução — nunca versionar:
-# data/  guarda as credenciais do banco (config.json) gravadas pelo instalador
-# media/ guarda os uploads feitos pelo painel
+# data/ guarda as credenciais do banco (config.json) gravadas pelo instalador
+# (uploads do painel ficam no MySQL, não em disco)
 data/
-media/
 
 
 # Config local de ferramentas

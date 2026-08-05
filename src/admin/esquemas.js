@@ -369,6 +369,13 @@ export const CAMPOS_PERFIL = [
   { nome: 'fotoId', rotulo: 'Foto', tipo: 'midia', largura: 'metade' },
   { nome: 'curriculoId', rotulo: 'Currículo (PDF)', tipo: 'midia', largura: 'metade' },
   {
+    nome: 'faviconId',
+    rotulo: 'Favicon',
+    tipo: 'midia',
+    largura: 'metade',
+    ajuda: 'PNG ou SVG quadrado — aparece na aba do navegador.',
+  },
+  {
     nome: 'promptUsuario',
     rotulo: 'Prompt do terminal',
     tipo: 'texto',

@@ -24,6 +24,7 @@ export async function generateMetadata() {
       type: 'website',
       locale: 'pt_BR',
     },
+    icons: perfil?.favicon ? { icon: `/midia/${perfil.favicon.arquivo}` } : undefined,
     robots: { index: true, follow: true },
   }
 }

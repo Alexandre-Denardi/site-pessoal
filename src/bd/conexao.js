@@ -1,5 +1,13 @@
 import { Sequelize } from 'sequelize'
 
+// O Sequelize carrega o driver do dialeto com require dinâmico (o nome vem
+// de uma variável), e por isso o rastreador de arquivos do `output:
+// standalone` não enxerga essa dependência sozinho — a imagem Docker builda
+// sem o mysql2 e falha só em runtime. Este import estático, sem uso direto,
+// força o rastreador a incluir o pacote (e toda a árvore de dependências
+// dele) na imagem.
+import 'mysql2'
+
 import { lerConfig } from './config.js'
 import { definirModelos } from './modelos.js'
 

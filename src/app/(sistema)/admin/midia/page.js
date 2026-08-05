@@ -14,6 +14,12 @@ const tamanhoLegivel = (bytes) => {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
 
+const MENSAGENS_ERRO = {
+  vazio: 'selecione um arquivo antes de enviar.',
+  tipo: 'tipo de arquivo não permitido. Use imagem (png, jpg, webp, gif, svg) ou PDF.',
+  tamanho: 'arquivo maior que 10 MB.',
+}
+
 export default async function PaginaMidia({ searchParams }) {
   const { erro } = await searchParams
   const bd = await getBd()
@@ -33,7 +39,7 @@ export default async function PaginaMidia({ searchParams }) {
       <form action={enviarMidia} className="cartao mb-8 p-5">
         {erro ? (
           <p className="mono mb-4 rounded border border-vermelho/50 bg-vermelho/10 px-3 py-2 text-xs text-vermelho">
-            ✗ selecione um arquivo antes de enviar.
+            ✗ {MENSAGENS_ERRO[erro] || 'não foi possível enviar o arquivo.'}
           </p>
         ) : null}
 

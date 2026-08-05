@@ -32,7 +32,6 @@ ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PORT=8080 \
     HOSTNAME=0.0.0.0 \
-    MEDIA_DIR=/app/media \
     CONFIG_FILE=/app/data/config.json
 
 RUN apt-get update \
@@ -47,9 +46,8 @@ COPY --from=builder /app/public ./public
 # Lidas em tempo de execução pelo Umzug — não entram no bundle do Next.
 COPY --from=builder /app/migrations ./migrations
 
-# data/  → config.json gravado pelo instalador
-# media/ → uploads do painel
-RUN mkdir -p /app/data /app/media
+# data/ → config.json gravado pelo instalador (uploads do painel ficam no banco)
+RUN mkdir -p /app/data
 
 EXPOSE 8080
 

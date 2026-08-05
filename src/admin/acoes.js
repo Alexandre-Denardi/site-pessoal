@@ -1,7 +1,6 @@
 'use server'
 
 import crypto from 'crypto'
-import fs from 'fs/promises'
 import path from 'path'
 
 import { revalidatePath } from 'next/cache'
@@ -15,8 +14,9 @@ import { mensagemDeErro, validarTamanhos } from '@/lib/erros'
 import { usuarioAtual } from '@/lib/sessao'
 import { formatSlug } from '@/lib/slug'
 
-const PASTA_MIDIA =
-  process.env.MEDIA_DIR || path.join(/*turbopackIgnore: true*/ process.cwd(), 'media')
+// Mesmas extensões que /midia/[arquivo]/route.js sabe servir com o content-type certo.
+const EXTENSOES_PERMITIDAS = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.pdf'])
+const TAMANHO_MAXIMO = 10 * 1024 * 1024 // 10 MB
 
 const exigirLogin = async () => {
   const usuario = await usuarioAtual()
@@ -190,14 +190,14 @@ export async function enviarMidia(formData) {
     redirect('/admin/midia?erro=vazio')
   }
 
+  const extensao = (path.extname(arquivo.name) || '').toLowerCase().slice(0, 10)
+  if (!EXTENSOES_PERMITIDAS.has(extensao)) redirect('/admin/midia?erro=tipo')
+  if (arquivo.size > TAMANHO_MAXIMO) redirect('/admin/midia?erro=tamanho')
+
   const bd = await conectar()
 
   const buffer = Buffer.from(await arquivo.arrayBuffer())
-  const extensao = (path.extname(arquivo.name) || '').toLowerCase().slice(0, 10)
   const nomeDisco = `${Date.now()}-${crypto.randomBytes(4).toString('hex')}${extensao}`
-
-  await fs.mkdir(/*turbopackIgnore: true*/ PASTA_MIDIA, { recursive: true })
-  await fs.writeFile(/*turbopackIgnore: true*/ path.join(PASTA_MIDIA, nomeDisco), buffer)
 
   let largura = null
   let altura = null
@@ -213,6 +213,9 @@ export async function enviarMidia(formData) {
     }
   }
 
+  // O arquivo fica no próprio banco (dados) — sobrevive a redeploy junto
+  // com o resto do conteúdo. `arquivo` continua existindo só como
+  // identificador único na URL pública (/midia/<arquivo>).
   await bd.modelos.Midia.create({
     arquivo: nomeDisco,
     nomeOriginal: arquivo.name,
@@ -221,6 +224,7 @@ export async function enviarMidia(formData) {
     largura,
     altura,
     alt: String(formData.get('alt') || ''),
+    dados: buffer,
   })
 
   revalidatePath('/')
@@ -234,9 +238,6 @@ export async function excluirMidia(id) {
   const registro = await bd.modelos.Midia.findByPk(Number(id))
 
   if (registro) {
-    await fs
-      .unlink(/*turbopackIgnore: true*/ path.join(PASTA_MIDIA, registro.arquivo))
-      .catch(() => {})
     await registro.destroy()
   }
 

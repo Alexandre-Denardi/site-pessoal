@@ -159,7 +159,7 @@ aplicação escutando na **porta 8080** — o Dockerfile já faz isso. Se o app 
 por falta de memória, suba o `RAM` para `1024`.
 
 Compacte a pasta e envie pelo painel, CLI, bot do Discord ou extensão do VS Code.
-O `.discloudignore` já exclui `node_modules/`, `.next/`, `data/` e `media/` — o build
+O `.discloudignore` já exclui `node_modules/`, `.next/` e `data/` — o build
 acontece no servidor.
 
 Como o MySQL está na rede interna do Discloud, informe no instalador o host interno
@@ -172,7 +172,6 @@ do banco.
 | `NEXT_PUBLIC_SERVER_URL` | `https://<seu-id>.discloud.app` — canonical e OG |
 | `DB_HOST` `DB_PORT` `DB_NAME` `DB_USER` `DB_PASS` | Pulam o instalador     |
 | `APP_SECRET`             | Assina o cookie de sessão (obrigatória se usar as `DB_*`) |
-| `MEDIA_DIR`              | Onde gravar os uploads (padrão `./media`)        |
 
 Gere o `APP_SECRET` com:
 
@@ -184,18 +183,14 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ## Persistência
 
-Seus **dados de conteúdo estão no seu MySQL** — redeploy não encosta neles. Dentro do
-container ficam só duas coisas:
+Seus **dados de conteúdo — inclusive os arquivos enviados pelo painel (imagens, logos,
+currículo) — estão no seu MySQL**, como BLOB. Redeploy não encosta neles. A única coisa
+que fica dentro do container é `data/config.json`, com as credenciais do banco.
 
-- `data/config.json` — as credenciais do banco
-- `media/` — os arquivos enviados pelo painel
-
-Se o Discloud descartar o volume num redeploy, o efeito é: o site pede a instalação de
-novo (basta reinformar as credenciais; o conteúdo continua lá) e as imagens somem.
-
-Para eliminar isso de vez, defina as variáveis `DB_*` e `APP_SECRET` no painel do
-Discloud — aí o instalador nem aparece e o `config.json` deixa de importar. Para as
-imagens, guarde os originais fora do container e reenvie se preciso.
+Se o Discloud descartar o volume num redeploy, o efeito é só: o site pede a instalação
+de novo (basta reinformar as credenciais; todo o conteúdo, incluindo mídia, continua no
+banco). Para eliminar isso de vez, defina as variáveis `DB_*` e `APP_SECRET` no painel
+do Discloud — aí o instalador nem aparece e o `config.json` deixa de importar.
 
 ---
 

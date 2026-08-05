@@ -5,7 +5,6 @@
     "moduleResolution": "bundler",
     "jsx": "preserve",
     "checkJs": false,
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@payload-config": ["./src/payload.config.js"]

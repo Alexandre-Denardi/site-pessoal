@@ -29,6 +29,7 @@ export function definirModelos(sequelize) {
       altura: { type: DataTypes.INTEGER },
       alt: { type: DataTypes.STRING },
       credito: { type: DataTypes.STRING },
+      dados: { type: DataTypes.BLOB('long') },
     },
     { tableName: 'midia' },
   )
@@ -144,6 +145,7 @@ export function definirModelos(sequelize) {
   Certificacao.belongsTo(Midia, { as: 'logo', foreignKey: 'logoId', constraints: false })
   Perfil.belongsTo(Midia, { as: 'foto', foreignKey: 'fotoId', constraints: false })
   Perfil.belongsTo(Midia, { as: 'curriculo', foreignKey: 'curriculoId', constraints: false })
+  Perfil.belongsTo(Midia, { as: 'favicon', foreignKey: 'faviconId', constraints: false })
 
   return { Usuario, Midia, Projeto, Nota, Certificacao, Experiencia, Habilidade, Perfil }
 }

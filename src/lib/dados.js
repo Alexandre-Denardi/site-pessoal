@@ -24,7 +24,7 @@ const comMidia = (bd, campos) =>
 export const getPerfil = () =>
   seguro(async (bd) => {
     const perfil = await bd.modelos.Perfil.findByPk(1, {
-      include: comMidia(bd, ['foto', 'curriculo']),
+      include: comMidia(bd, ['foto', 'curriculo', 'favicon']),
     })
     return puro(perfil)
   }, null)

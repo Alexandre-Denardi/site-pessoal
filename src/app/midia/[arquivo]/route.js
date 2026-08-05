@@ -1,7 +1,6 @@
-import fs from 'fs/promises'
 import path from 'path'
 
-const PASTA = process.env.MEDIA_DIR || path.join(/*turbopackIgnore: true*/ process.cwd(), 'media')
+import { getBd } from '@/bd/conexao'
 
 const TIPOS = {
   '.png': 'image/png',
@@ -13,25 +12,31 @@ const TIPOS = {
   '.pdf': 'application/pdf',
 }
 
-/** Serve os arquivos enviados pelo painel (ficam fora de public/). */
+export const dynamic = 'force-dynamic'
+
+/** Serve os arquivos enviados pelo painel — ficam como BLOB no banco. */
 export async function GET(request, { params }) {
   const { arquivo } = await params
 
-  // Só o nome do arquivo — nada de subir diretórios.
+  // Só o nome do arquivo, sem separador de diretório.
   const nome = path.basename(arquivo)
-  const caminho = path.join(/*turbopackIgnore: true*/ PASTA, nome)
 
-  try {
-    const dados = await fs.readFile(/*turbopackIgnore: true*/ caminho)
-    const tipo = TIPOS[path.extname(nome).toLowerCase()] || 'application/octet-stream'
+  const bd = await getBd()
+  if (!bd) return new Response('Arquivo não encontrado', { status: 404 })
 
-    return new Response(dados, {
-      headers: {
-        'Content-Type': tipo,
-        'Cache-Control': 'public, max-age=31536000, immutable',
-      },
-    })
-  } catch {
-    return new Response('Arquivo não encontrado', { status: 404 })
-  }
+  const registro = await bd.modelos.Midia.findOne({
+    where: { arquivo: nome },
+    attributes: ['mime', 'dados'],
+  })
+
+  if (!registro?.dados) return new Response('Arquivo não encontrado', { status: 404 })
+
+  const tipo = registro.mime || TIPOS[path.extname(nome).toLowerCase()] || 'application/octet-stream'
+
+  return new Response(registro.dados, {
+    headers: {
+      'Content-Type': tipo,
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    },
+  })
 }
