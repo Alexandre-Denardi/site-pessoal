@@ -16,6 +16,7 @@ export function NavAdmin({ itens }) {
           <Link
             key={item.href}
             href={item.href}
+            prefetch={false}
             className={`mono block rounded px-3 py-2 text-sm transition ${
               ativo
                 ? 'bg-verde/10 text-verde'
